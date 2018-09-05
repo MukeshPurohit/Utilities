@@ -1,4 +1,6 @@
 node {
+      echo "%ANDROID_HOME%"
+      
       stage('Checkout Android based business application codebase') {
       git 'https://github.com/MukeshPurohit/android-sunflower.git'
    }
