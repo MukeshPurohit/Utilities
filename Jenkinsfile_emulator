@@ -54,7 +54,7 @@ node {
    stage('Perform APK install on Emulator') {
        dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
        {    
-        bat(/adb -s "emulator-5584" install "C:\\projects\\android-sunflower\\app\\build\\outputs\\apk\\debug\\app-debug.apk"/)            
+        bat(/adb -s "emulator-5584" install "%WORKSPACE%\\app\\build\\outputs\\apk\\debug\\app-debug.apk"/)            
         }
     }
 
