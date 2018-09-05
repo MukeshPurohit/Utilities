@@ -35,7 +35,7 @@ node {
             sleep 120
     
         bat(/adb -s "emulator-5584" shell input keyevent 82/)   
-        sleep 30
+        sleep 60
         }
     }
 
