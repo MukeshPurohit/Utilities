@@ -1,16 +1,81 @@
-node 
-{
-     stage('Checkout Android application (GIT)') {
+node {
+      stage('Checkout Android application (GIT)') {
       git 'https://github.com/MukeshPurohit/android-sunflower.git'
    }
      stage('Run Unit Tests') {
          bat(/gradlew test/)
     }  
+
    stage('Build Android application') {
          bat(/gradlew assembleDebug/)
+      }
+      
+   stage('SDK Update and License acceptance') {
+       dir("${ANDROID_HOME}/tools/bin")
+       {    
+           bat(/echo y | sdkmanager --update/)
+           bat(/echo y | sdkmanager system-images;android-25;google_apis;x86/)
+           bat(/echo y | sdkmanager --licenses/)
+       }
    }
-   stage('Run Tests for connectedAndroidTest') {
+   
+   stage('Create Virtual Disk') {
+           dir("${ANDROID_HOME}/tools/bin")
+           {    
+               bat(/echo y | avdmanager create avd -f --name "processing-phone-%BUILD_NUMBER%" --package "system-images;android-25;google_apis;x86" --abi "google_apis\/x86" -d "Nexus 5"/)
+               bat 'echo y | avdmanager list avd'
+           }
+   }
+
+   stage('Start Emulator') {
+   
+       dir("${ANDROID_HOME}/tools")
+       {    
+           bat(/START \/B ${ANDROID_HOME}\/tools\/emulator -avd "processing-phone-%BUILD_NUMBER%" -netspeed full -gpu off -netdelay none -verbose -ports 5584,5585 -wipe-data -no-boot-anim -no-audio -skin 480x800 -memory 2048/)
+       }
+   }
+   
+   stage ('Sleep - 3 mins')
+   {
+       sleep 180 
+   }
+   
+   stage('Check - Device is connected. If yes, unlock connected device') {
+      dir("${ANDROID_HOME}\\platform-tools")
+       {    
+            bat(/adb wait-for-device/)       
+            bat(/adb devices/)
+            bat(/adb -s "emulator-5584" shell input keyevent 82/)   
+        }
+    }
+
+   stage ('Sleep - 1.5 min')
+   {
+       sleep 90 
+   }
+
+
+   stage('Perform APK install on Emulator') {
+       dir("${ANDROID_HOME}\\platform-tools")
+       {    
+        bat(/adb -s "emulator-5584" install "%WORKSPACE%\\app\\build\\outputs\\apk\\debug\\app-debug.apk"/)            
+        }
+    }
+
+   stage ('Sleep - 1 min')
+   {
+          sleep 60 
+    }
+
+   stage('List installed package on Emulator') {
+       dir("${ANDROID_HOME}\\platform-tools")
+       {    
+        bat(/adb shell pm list packages/)                
+        }
+    }
+	
+	stage('Run Tests for connectedAndroidTest') {
          bat(/gradlew connectedAndroidTest/)
     }  
-    
 }
+	
