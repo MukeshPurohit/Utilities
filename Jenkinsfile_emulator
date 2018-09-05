@@ -29,7 +29,7 @@ node {
    
        dir("${ANDROID_HOME}/tools")
        {    
-           bat(/START \/B C:\/Users\/capeuser\/AppData\/Local\/Android\/Sdk\/tools\/emulator -avd "processing-phone-%BUILD_NUMBER%" -netspeed full -gpu off -netdelay none -verbose -ports 5584,5585 -wipe-data -no-boot-anim -no-audio -skin 480x800 -memory 2048/)
+           bat(/START \/B ${ANDROID_HOME}\/tools\/emulator -avd "processing-phone-%BUILD_NUMBER%" -netspeed full -gpu off -netdelay none -verbose -ports 5584,5585 -wipe-data -no-boot-anim -no-audio -skin 480x800 -memory 2048/)
        }
    }
    
@@ -39,7 +39,7 @@ node {
    }
    
    stage('Check connected devices') {
-      dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
+      dir("${ANDROID_HOME}\\platform-tools")
        {    
             bat(/adb wait-for-device/)       
             bat(/adb devices/)
@@ -54,7 +54,7 @@ node {
 
 
    stage('Perform APK install on Emulator') {
-       dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
+       dir("${ANDROID_HOME}\\platform-tools")
        {    
         bat(/adb -s "emulator-5584" install "%WORKSPACE%\\app\\build\\outputs\\apk\\debug\\app-debug.apk"/)            
         }
@@ -66,7 +66,7 @@ node {
     }
 
    stage('List installed package on Emulator') {
-       dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
+       dir("${ANDROID_HOME}\\platform-tools")
        {    
         bat(/adb shell pm list packages/)                
         }
