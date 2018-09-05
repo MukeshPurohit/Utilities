@@ -29,13 +29,13 @@ node {
       dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
        {    
             bat(/adb wait-for-device/)       
-            sleep 100
+            sleep 30
     
             bat(/adb devices/)
-            sleep 120
+            sleep 30
     
         bat(/adb -s "emulator-5584" shell input keyevent 82/)   
-        sleep 100
+        sleep 30
         }
     }
 
@@ -44,7 +44,7 @@ node {
        {    
 
         bat(/adb -s "emulator-5584" install "C:\\projects\\android-sunflower\\app\\build\\outputs\\apk\\debug\\app-debug.apk"/)            
-        sleep 100    
+        sleep 30    
         }
     }
    stage('List installed package on Emulator') {
