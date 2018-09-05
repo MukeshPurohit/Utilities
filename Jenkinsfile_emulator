@@ -32,7 +32,7 @@ node {
             sleep 30
     
             bat(/adb devices/)
-            sleep 30
+            sleep 60
     
         bat(/adb -s "emulator-5584" shell input keyevent 82/)   
         sleep 30
