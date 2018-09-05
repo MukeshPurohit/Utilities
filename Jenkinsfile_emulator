@@ -1,6 +1,12 @@
 node {
+      stage('Checkout Android based business application codebase') {
+      git 'https://github.com/MukeshPurohit/android-sunflower.git'
+   }
+   stage('Build codebase') {
+         bat(/gradlew assembleDebug/)
+      }
+      
    stage('SDK Update and License acceptance') {
-
        dir('C:/Users/capeuser/AppData/Local/Android/Sdk/tools/bin')
        {    
            bat(/echo y | sdkmanager --update/)
@@ -9,7 +15,7 @@ node {
        }
    }
    
-      stage('Create AVD') {
+   stage('Create AVD') {
            dir('C:/Users/capeuser/AppData/Local/Android/Sdk/tools/bin')
            {    
                bat(/echo y | avdmanager create avd -f --name "processing-phone-%BUILD_NUMBER%" --package "system-images;android-25;google_apis;x86" --abi "google_apis\/x86" -d "Nexus 5"/)
@@ -24,34 +30,43 @@ node {
            bat(/START \/B C:\/Users\/capeuser\/AppData\/Local\/Android\/Sdk\/tools\/emulator -avd "processing-phone-%BUILD_NUMBER%" -netspeed full -gpu off -netdelay none -verbose -ports 5584,5585 -wipe-data -no-boot-anim -no-audio -skin 480x800 -memory 2048/)
        }
    }
-    
+   
+   stage ('Sleep for 3 mins - Emulator is slow to fully started')
+   {
+       sleep 180 
+   }
+   
    stage('Check connected devices') {
       dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
        {    
             bat(/adb wait-for-device/)       
-            sleep 30
-    
             bat(/adb devices/)
-            sleep 120
-    
-        bat(/adb -s "emulator-5584" shell input keyevent 82/)   
-        sleep 60
+            bat(/adb -s "emulator-5584" shell input keyevent 82/)   
         }
     }
+
+   stage ('Sleep for 1.5 min - As Emulator unlocking takes time')
+   {
+       sleep 90 
+   }
+
 
    stage('Perform APK install on Emulator') {
        dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
        {    
-
         bat(/adb -s "emulator-5584" install "C:\\projects\\android-sunflower\\app\\build\\outputs\\apk\\debug\\app-debug.apk"/)            
-        sleep 30    
         }
     }
+
+   stage ('Sleep for 1 min - As APK install takes time on Emulator')
+   {
+          sleep 60 
+    }
+
    stage('List installed package on Emulator') {
        dir('C:\\Users\\capeuser\\AppData\\Local\\Android\\Sdk\\platform-tools')
        {    
         bat(/adb shell pm list packages/)                
         }
     }
-    sleep 100
 }
