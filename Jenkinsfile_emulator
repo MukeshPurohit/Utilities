@@ -1,10 +1,8 @@
 node {
-      echo "${ANDROID_HOME}"
-      
-      stage('Checkout Android based business application codebase') {
+      stage('Checkout Android application (GIT)') {
       git 'https://github.com/MukeshPurohit/android-sunflower.git'
    }
-   stage('Build codebase') {
+   stage('Build Android application') {
          bat(/gradlew assembleDebug/)
       }
       
@@ -17,7 +15,7 @@ node {
        }
    }
    
-   stage('Create AVD') {
+   stage('Create Virtual Disk') {
            dir("${ANDROID_HOME}/tools/bin")
            {    
                bat(/echo y | avdmanager create avd -f --name "processing-phone-%BUILD_NUMBER%" --package "system-images;android-25;google_apis;x86" --abi "google_apis\/x86" -d "Nexus 5"/)
@@ -33,12 +31,12 @@ node {
        }
    }
    
-   stage ('Sleep for 3 mins - Emulator is slow to fully started')
+   stage ('Sleep - 3 mins')
    {
        sleep 180 
    }
    
-   stage('Check connected devices') {
+   stage('Check connected devices and unlock connected device') {
       dir("${ANDROID_HOME}\\platform-tools")
        {    
             bat(/adb wait-for-device/)       
@@ -47,7 +45,7 @@ node {
         }
     }
 
-   stage ('Sleep for 1.5 min - As Emulator unlocking takes time')
+   stage ('Sleep - 1.5 min')
    {
        sleep 90 
    }
@@ -60,7 +58,7 @@ node {
         }
     }
 
-   stage ('Sleep for 1 min - As APK install takes time on Emulator')
+   stage ('Sleep - 1 min')
    {
           sleep 60 
     }
