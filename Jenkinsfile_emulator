@@ -45,13 +45,14 @@ node {
        {    
             bat(/adb wait-for-device/)       
             bat(/adb devices/)
+	    sleep 60
             bat(/adb -s "emulator-5584" shell input keyevent 82/)   
         }
     }
 
    stage ('Sleep - 1.5 min')
    {
-       sleep 90 
+       sleep 90
    }
 
 
