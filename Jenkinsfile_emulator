@@ -1,13 +1,14 @@
-node {
-      stage('Checkout Android application (GIT)') {
+node 
+{
+     stage('Checkout Android application (GIT)') {
       git 'https://github.com/MukeshPurohit/android-sunflower.git'
    }
-   stage('Build Android application') {
-         bat(/gradlew assembleDebug/)
-      }
-   stage('Run Unit Tests') {
+     stage('Run Unit Tests') {
          bat(/gradlew test/)
     }  
+   stage('Build Android application') {
+         bat(/gradlew assembleDebug/)
+   }
    stage('Run Tests for connectedAndroidTest') {
          bat(/gradlew connectedAndroidTest/)
     }  
