@@ -36,7 +36,7 @@ node {
        sleep 180 
    }
    
-   stage('Check connected devices and unlock connected device') {
+   stage('Check - Device is connected. If yes, unlock connected device') {
       dir("${ANDROID_HOME}\\platform-tools")
        {    
             bat(/adb wait-for-device/)       
